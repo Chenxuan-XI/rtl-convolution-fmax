@@ -5,6 +5,12 @@ This stage implements a minimal 1 input → 1 output convolution kernel
 using a fully combinational multiply-accumulate datapath.
 
 No pipelining or timing optimisation is applied.
+- kernel: 1×1 convolution, y = x*w (optional +b later)
+- data type: signed INT8
+- interface: in_valid/out_valid only (no backpressure)
+- architecture v0.0: combinational multiply (+ add) then output register
+- latency: 1 cycle (out_valid delayed from in_valid by 1)
+- verification: cycle-accurate reference model in TB
 
 ## RTL Structure
 - single-cycle multiplication
