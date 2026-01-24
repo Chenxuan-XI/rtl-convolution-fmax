@@ -19,9 +19,7 @@ and incrementally optimises it towards the fabric frequency limit.
 - Build an engineering-grade RTL design portfolio
 
 ## Development Stages
-- Stage 0: Naive combinational convolution
-- Stage 1: Pipelined datapath
-- Stage 2: Fabric-aware optimisation (DSP, control path, routing)
+- Stage 0: Timing‑Driven Frequency Exploration of a 1×1 Convolution MAC
 
 ## Tools
 - SystemVerilog
