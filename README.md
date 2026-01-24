@@ -19,7 +19,7 @@ and incrementally optimises it towards the fabric frequency limit.
 - Build an engineering-grade RTL design portfolio
 
 ## Development Stages
-- Stage 0: Timing‑Driven Frequency Exploration of a 1×1 Convolution MAC
+- Stage 1: Timing‑Driven Frequency Exploration of a 1×1 Convolution MAC (stage1.md)
 
 ## Tools
 - SystemVerilog
