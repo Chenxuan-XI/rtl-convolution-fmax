@@ -20,6 +20,8 @@ and incrementally optimises it towards the fabric frequency limit.
 
 ## Development Stages
 - Stage 1: Timing‑Driven Frequency Exploration of a 1×1 Convolution MAC (Stage1.md)
+👉 [Stage 1 — Pipelined MAC & Timing Analysis](Stage1.md)
+
 
 ## Tools
 - SystemVerilog
