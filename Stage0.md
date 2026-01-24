@@ -80,7 +80,7 @@ This stage establishes a **clean baseline**: arithmetic is not the bottleneck—
 
 ---
 
-## Stage 2 — Introduce Memory Reality
+## Stage 1.2 — Introduce Memory Reality
 
 Add on‑chip memory to the datapath:
 
@@ -93,7 +93,7 @@ Purpose:
 * Quantify the cost of memory access
 * Observe routing and placement effects
 
-## Stage 3 — Spatial Parallelism
+## Stage 1.3 — Spatial Parallelism
 
 Replicate multiple MAC units:
 
@@ -106,7 +106,7 @@ Purpose:
 * Measure congestion‑induced frequency degradation
 * Study scaling behavior
 
-## Stage 4 — Control and Scheduling (Optional)
+## Stage 1.4 — Control and Scheduling (Optional)
 
 Introduce realistic control signals (valid/enable/fanout) to evaluate control‑path criticality.
 
