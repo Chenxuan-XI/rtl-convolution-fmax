@@ -85,7 +85,7 @@ This stage establishes a **clean baseline**: arithmetic is not the bottleneck—
 Add on‑chip memory to the datapath:
 
 ```
-BRAM → DSP48 → FF
+BRAM → FF → DSP48 → FF
 ```
 
 Purpose:
