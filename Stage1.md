@@ -44,11 +44,7 @@ DSP48 register → FF
 
 This ensures that Vivado reports a meaningful setup‑time critical path instead of an I/O‑limited path.
 
----
-
-## Timing Sweep Results (Stage 1)
-
-### Methodology
+### Timing Sweep Results (Stage 1)
 
 * A single clock constraint is applied via XDC
 * Clock period is progressively reduced
