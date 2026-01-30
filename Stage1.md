@@ -88,10 +88,26 @@ Add on‑chip memory to the datapath:
 BRAM → FF → DSP48 → FF
 ```
 
-Purpose:
+### FPGA Resource Utilization (Post-Synthesis)
 
-* Quantify the cost of memory access
-* Observe routing and placement effects
+**Target:** Xilinx Zynq-7020 (`xc7z020clg400-1`)
+**Tool:** Vivado 2025.1
+**Design:** `conv1x1_2stage` (DSP48 MAC + BRAM weight storage)
+
+| Resource           | Used | Available | Util.  |
+| ------------------ | ---- | --------- | ------ |
+| Slice LUTs         | 0    | 53,200    | 0.00%  |
+| Slice Registers    | 35   | 106,400   | 0.03%  |
+| Block RAM (RAMB18) | 1    | 280       | 0.36%  |
+| Block RAM Tiles    | 0.5  | 140       | 0.36%  |
+| DSP48E1            | 1    | 220       | 0.45%  |
+| BUFG               | 1    | 32        | 3.13%  |
+| Bonded I/O         | 100  | 125       | 80.00% |
+
+**Notes:**
+This stage intentionally uses minimal resources, with the datapath mapped to a single DSP48 and weights stored in true Block RAM (RAMB18E1). The design serves as a clean baseline for Fmax and timing-closure experiments; high I/O usage reflects a bare kernel-level top module prior to system integration.
+
+---
 
 ## Stage 1.3 — Spatial Parallelism
 
