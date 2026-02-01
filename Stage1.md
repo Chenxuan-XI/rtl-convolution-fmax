@@ -103,6 +103,20 @@ BRAM → FF → DSP48 → FF
 **Notes:**
 This stage intentionally uses minimal resources, with the datapath mapped to a single DSP48 and weights stored in true Block RAM (RAMB18E1). The design serves as a clean baseline for Fmax and timing-closure experiments; high I/O usage reflects a bare kernel-level top module prior to system integration.
 
+### Timing & Fmax Summary
+
+The critical path is dominated by the **synchronous BRAM read to DSP48 input register** path.
+At lower frequencies, the design is datapath-clean and fully meets setup/hold constraints.
+At **333 MHz (3.0 ns)**, timing fails **not due to setup or hold violations**, but because the **DSP48E1 primitive violates the minimum clock period (pulse-width) requirement: 3.884ns(WPWS = -0.884ns)**, which exceeds the target clock period.
+
+| Frequency (MHz) | Clock Period (ns) | WNS (ns) | TNS (ns) | WHS (ns) | Status |
+| --------------- | ----------------- | -------- | -------- | -------- | ------ |
+| 200             | 5.0               | 1.04     | 0        | 0.229    | Pass   |
+| 250             | 4.0               | 0.85     | 0        | 0.204    | Pass   |
+| 333             | 3.0               | 0.587    | 0        | 0.143    | Fail   |
+
+**Note:** The failure at 333 MHz is caused by the **DSP48 minimum period (WPWS) limit**, not by data-path setup or hold timing.
+
 ---
 
 ## Stage 1.3 — Spatial Parallelism
