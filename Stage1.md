@@ -147,6 +147,9 @@ always_ff @(posedge clk) begin
         y_s0 <= (x_q * w_q) + b_q;
     end
 end
+```
+
+
 
 
 ---
