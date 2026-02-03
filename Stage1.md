@@ -149,6 +149,22 @@ always_ff @(posedge clk) begin
 end
 ```
 
+New structure: 
+
+## Pipeline Structure
+
+```text
+BRAM  -> Reg
+          |
+          v
+      [MulStage] -> Reg
+          |
+          v
+      [AddStage] -> Reg
+          |
+          v
+      [OutStage] -> Reg
+```
 
 
 
