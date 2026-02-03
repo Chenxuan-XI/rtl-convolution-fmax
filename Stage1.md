@@ -130,7 +130,7 @@ ACASCREG = 1
 BCASCREG = 1
 ```
 
-**MREG = 0** means that DSP is combinational logic, connecting directly to the adder and output routine.
+**MREG = 0** means that DSP does not use its multiplication register, which is a combinational logic, connecting directly to the adder and output routine.
 Hence, Vivado will provide a very small value on the smallest clock cycle. 
 The solution to this problem is to deepen the pipeline structure of DSP48.
 
