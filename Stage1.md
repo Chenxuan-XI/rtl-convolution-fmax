@@ -78,6 +78,8 @@ This stage establishes a **clean baseline**: arithmetic is not the bottleneck—
 
 ## Stage 1.2 — Introduce Memory Reality
 
+### Overview
+
 Add on‑chip memory to the datapath:
 
 ```
@@ -135,6 +137,8 @@ The solution to this problem is to deepen the pipeline structure of DSP48.
 ---
 ## Stage 1.3 - DSP Pipelining
 
+### Overview
+
 Add pipelines to DSP48 used in the 1x1 Convolution MAC
 
 The origin conv RTL:
@@ -149,9 +153,7 @@ always_ff @(posedge clk) begin
 end
 ```
 
-New structure: 
-
-## Pipeline Structure
+### Pipeline structure: 
 
 ```text
 BRAM  -> Reg
