@@ -179,6 +179,7 @@ This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range
 
 * Datapath setup timing remains positive beyond 450 MHz
 * Failure is dominated by **clock primitive minimum period / pulse-width rules**, not combinational delay
+* logic: 0.518ns（38%）; route: 0.837ns（62%）
 
 ### Conclusion
 
