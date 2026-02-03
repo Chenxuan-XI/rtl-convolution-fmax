@@ -183,7 +183,10 @@ This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range
 
 ### Conclusion
 
-The pipelined DSP datapath itself supports **~450–500 MHz** operation, however the **system-level frequency limit** on Zynq-7020 (-1) is constrained by **BUFG / clocking rules (~2.15 ns min period)**.
+The pipelined DSP datapath itself supports **~450–500 MHz** operation; however, the **system-level frequency limit** on Zynq-7020 (-1) is constrained by **WPWS**.
+Pulse-width/min-period failures are caused by a global clock primitive constraint rather than datapath delay.
+Vivado reports a BUFG input Min Period requirement of 2.155ns (BUFGCTRL_X0Y0), implying a practical clock-safe ceiling of ~464MHz.
+Consequently, further DSP pipelining does not increase system Fmax on this device; the next limiting factor to study is scaling-induced routing/clocking effects under spatial parallelism.
 
 ---
 
