@@ -139,8 +139,17 @@ The solution to this problem is to deepen the pipeline structure of DSP48.
 
 ### Overview
 
-Add pipelines to DSP48 used in the 1x1 Convolution MAC
+This stage introduces a **pipelined DSP48-based microarchitecture** for a 1×1 convolution MAC, targeting maximum achievable clock frequency on **Zynq-7020 (-1 speed grade)**.
+The design focuses on **datapath realism** (DSP inference, internal pipeline registers) while keeping control logic minimal.
 
+### Microarchitecture
+
+* **1× DSP48E1** used in `MULTIPLY + ADD` mode
+* **Two-stage pipeline**:
+
+  * **Stage 0**: input register + DSP multiply
+  * **Stage 1**: DSP add + output register
+ 
 ```text
 BRAM  -> Reg
           |
@@ -154,7 +163,26 @@ BRAM  -> Reg
       [OutStage] -> Reg
 ```
 
+This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range of the clock limitation for DSP48E1 set by Vivado.
 
+### Frequency Sweep Results
+
+| Clock Period (ns) | Frequency (MHz) | WNS (ns) | WPWS (ns) | Status |
+| ----------------: | --------------: | -------: | --------: | ------ |
+|               3.0 |           333.3 |   +1.447 |    +0.845 | ✅ Pass |
+|               2.5 |           400.0 |   +1.010 |    +0.345 | ✅ Pass |
+|               2.2 |           454.5 |   +0.710 |    +0.045 | ✅ Pass |
+|               2.1 |           476.2 |   +0.514 |    −0.055 | ❌ WPWS |
+|               2.0 |           500.0 |   +0.457 |    −0.155 | ❌ WPWS |
+
+**Summary**:
+
+* Datapath setup timing remains positive beyond 450 MHz
+* Failure is dominated by **clock primitive minimum period / pulse-width rules**, not combinational delay
+
+### Conclusion
+
+The pipelined DSP datapath itself supports **~450–500 MHz** operation, however the **system-level frequency limit** on Zynq-7020 (-1) is constrained by **BUFG / clocking rules (~2.15 ns min period)**.
 
 ---
 
