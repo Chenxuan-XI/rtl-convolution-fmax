@@ -126,12 +126,27 @@ DREG = 1
 PREG = 1
 ACASCREG = 1
 BCASCREG = 1
-
 ```
 
+**MREG = 0** means that DSP is combinational logic, connecting directly to the adder and output routine.
+Hence, Vivado will provide a very small value on the smallest clock cycle. 
+The solution to this problem is to deepen the pipeline structure of DSP48.
 
 ---
 ## Stage 1.3 - DSP Pipelining
+
+Add pipelines to DSP48 used in the 1x1 Convolution MAC
+
+The origin conv RTL:
+
+```systemverilog
+always_ff @(posedge clk) begin
+    valid_s0 <= valid_in_q;
+    if (valid_in_q) begin
+        // x * w + b in one cycle (mapped to DSP48)
+        y_s0 <= (x_q * w_q) + b_q;
+    end
+end
 
 
 ---
