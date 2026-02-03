@@ -115,10 +115,28 @@ At **333 MHz (3.0 ns)**, timing fails **due to setup violations**, and the **DSP
 | 250             | 4.0               | 0.85      | 0        | 0.204    | Pass   |
 | 333             | 3.0               | -0.915    | -12.974  | 0.143    | Fail   |
 
+The main failure reason is due to the negative WPWS, which derives from the DSP register configuration: 
+
+```
+AREG = 1
+BREG = 1
+MREG = 0
+CREG = 1
+DREG = 1
+PREG = 1
+ACASCREG = 1
+BCASCREG = 1
+
+```
+
+
+---
+## Stage 1.3 - DSP Pipelining
+
 
 ---
 
-## Stage 1.3 — Spatial Parallelism
+## Stage 1.4 — Spatial Parallelism
 
 Replicate multiple MAC units:
 
@@ -131,9 +149,6 @@ Purpose:
 * Measure congestion‑induced frequency degradation
 * Study scaling behavior
 
-## Stage 1.4 — Control and Scheduling (Optional)
-
-Introduce realistic control signals (valid/enable/fanout) to evaluate control‑path criticality.
 
 ---
 
