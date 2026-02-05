@@ -211,6 +211,7 @@ Purpose:
 |             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |        ~56–70% | ❌ Fail | **WPWS**        |
 
 **Critical path:** FF → DSP48 (CEP) and DSP48 (P output) → FF, routing-dominated.
+
 **Notes:** Setup timing remains positive beyond 450 MHz; failures are driven by **clock pulse-width / primitive limits**, not arithmetic depth.
 
 
