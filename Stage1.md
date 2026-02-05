@@ -207,8 +207,8 @@ Purpose:
 
 | Clock Period (ns) | Freq (MHz) | WNS (ns) | WPWS (ns) | DSP48 | Route % (crit) | Status | Limiting Factor |
 | ----------------: | ---------: | -------: | --------: | ----: | -------------: | :----: | --------------- |
-|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |        ~56–70% | ✅ Pass | Near clock PW   |
-|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |        ~56–70% | ❌ Fail | **WPWS**        |
+|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |        55.9% | ✅ Pass | Near clock PW   |
+|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |            % | ❌ Fail | **WPWS**        |
 
 **Critical path:** FF → DSP48 (CEP) and DSP48 (P output) → FF, routing-dominated.
 
