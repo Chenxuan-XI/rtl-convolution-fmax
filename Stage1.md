@@ -217,7 +217,13 @@ Purpose:
 ### N_MAC= 2 with BRAM
 
 ```
-BRAM → FF → N × (DSP48 → FF)
+RAMB → output FF
+        ↓
+   broadcast registers
+        ↓
+N × (DSP48E1 (A*B+C, PREG=1))
+        ↓
+N × FF
 ```
 
 
