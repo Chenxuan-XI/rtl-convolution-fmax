@@ -214,6 +214,11 @@ Purpose:
 
 **Notes:** Setup timing remains positive beyond 450 MHz; failures are driven by **clock pulse-width / primitive limits**, not arithmetic depth.
 
+### N_MAC= 2 with BRAM
+
+```
+BRAM → FF → N × (DSP48 → FF)
+```
 
 
 
