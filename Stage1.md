@@ -44,11 +44,7 @@ DSP48 register → FF
 
 This ensures that Vivado reports a meaningful setup‑time critical path instead of an I/O‑limited path.
 
----
-
-## Timing Sweep Results (Stage 1)
-
-### Methodology
+### Timing Sweep Results (Stage 1)
 
 * A single clock constraint is applied via XDC
 * Clock period is progressively reduced
@@ -82,18 +78,119 @@ This stage establishes a **clean baseline**: arithmetic is not the bottleneck—
 
 ## Stage 1.2 — Introduce Memory Reality
 
+### Overview
+
 Add on‑chip memory to the datapath:
 
 ```
-BRAM → DSP48 → FF
+BRAM → FF → DSP48 → FF
 ```
 
-Purpose:
+### FPGA Resource Utilization (Post-Synthesis)
 
-* Quantify the cost of memory access
-* Observe routing and placement effects
+**Target:** Xilinx Zynq-7020 (`xc7z020clg400-1`)
+**Tool:** Vivado 2025.1
+**Design:** `conv1x1_2stage` (DSP48 MAC + BRAM weight storage)
 
-## Stage 1.3 — Spatial Parallelism
+| Resource           | Used | Available | Util.  |
+| ------------------ | ---- | --------- | ------ |
+| Slice LUTs         | 0    | 53,200    | 0.00%  |
+| Slice Registers    | 35   | 106,400   | 0.03%  |
+| Block RAM (RAMB18) | 1    | 280       | 0.36%  |
+| Block RAM Tiles    | 0.5  | 140       | 0.36%  |
+| DSP48E1            | 1    | 220       | 0.45%  |
+| BUFG               | 1    | 32        | 3.13%  |
+| Bonded I/O         | 100  | 125       | 80.00% |
+
+**Notes:**
+This stage intentionally uses minimal resources, with the datapath mapped to a single DSP48 and weights stored in true Block RAM (RAMB18E1). The design serves as a clean baseline for Fmax and timing-closure experiments; high I/O usage reflects a bare kernel-level top module prior to system integration.
+
+### Timing & Fmax Summary
+
+The critical path is dominated by the **synchronous BRAM read to DSP48 input register** path.
+At lower frequencies, the design is datapath-clean and fully meets setup/hold constraints.
+At **333 MHz (3.0 ns)**, timing fails **due to setup violations**, and the **DSP48E1 primitive violates the minimum clock period (pulse-width) requirement: 3.884ns(WPWS = -0.884ns)**, which exceeds the target clock period.
+
+| Frequency (MHz) | Clock Period (ns) | WNS (ns)  | TNS (ns) | WHS (ns) | Status |
+| --------------- | ----------------- | --------- | -------- | -------- | ------ |
+| 200             | 5.0               | 1.04      | 0        | 0.229    | Pass   |
+| 250             | 4.0               | 0.85      | 0        | 0.204    | Pass   |
+| 333             | 3.0               | -0.915    | -12.974  | 0.143    | Fail   |
+
+The main failure reason is due to the negative WPWS, which derives from the DSP register configuration: 
+
+```
+AREG = 1
+BREG = 1
+MREG = 0
+CREG = 1
+DREG = 1
+PREG = 1
+ACASCREG = 1
+BCASCREG = 1
+```
+
+**MREG = 0** means that DSP does not use its multiplication register, which is a combinational logic, connecting directly to the adder and output routine.
+Hence, Vivado will provide a very small value on the smallest clock cycle. 
+The solution to this problem is to deepen the pipeline structure of DSP48.
+
+---
+## Stage 1.3 - DSP Pipelining
+
+### Overview
+
+This stage introduces a **pipelined DSP48-based microarchitecture** for a 1×1 convolution MAC, targeting maximum achievable clock frequency on **Zynq-7020 (-1 speed grade)**.
+The design focuses on **datapath realism** (DSP inference, internal pipeline registers) while keeping control logic minimal.
+
+### Microarchitecture
+
+* **1× DSP48E1** used in `MULTIPLY + ADD` mode
+* **Two-stage pipeline**:
+
+  * **Stage 0**: input register + DSP multiply
+  * **Stage 1**: DSP add + output register
+ 
+```text
+BRAM  -> Reg
+          |
+          v
+      [MulStage] -> Reg
+          |
+          v
+      [AddStage] -> Reg
+          |
+          v
+      [OutStage] -> Reg
+```
+
+This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range of the clock limitation for DSP48E1 set by Vivado.
+
+### Frequency Sweep Results
+
+| Clock Period (ns) | Frequency (MHz) | WNS (ns) | WPWS (ns) | Status |
+| ----------------: | --------------: | -------: | --------: | ------ |
+|               3.0 |           333.3 |   +1.447 |    +0.845 | ✅ Pass |
+|               2.5 |           400.0 |   +1.010 |    +0.345 | ✅ Pass |
+|               2.2 |           454.5 |   +0.710 |    +0.045 | ✅ Pass |
+|               2.1 |           476.2 |   +0.514 |    −0.055 | ❌ WPWS |
+|               2.0 |           500.0 |   +0.457 |    −0.155 | ❌ WPWS |
+
+**Summary**:
+
+* Datapath setup timing remains positive beyond 450 MHz
+* Failure is dominated by **clock primitive minimum period / pulse-width rules**, not combinational delay
+* logic: 0.518ns（38%）; route: 0.837ns（62%）at 2.1ns clock period
+
+### Conclusion
+
+The pipelined DSP datapath itself supports **~450–500 MHz** operation; however, the **system-level frequency limit** on Zynq-7020 (-1) is constrained by **WPWS**.
+Pulse-width/min-period failures are caused by a global clock primitive constraint rather than datapath delay.
+Vivado reports a BUFG input Min Period requirement of 2.155ns (BUFGCTRL_X0Y0), implying a practical clock-safe ceiling of ~464MHz.
+Consequently, further DSP pipelining does not increase system Fmax on this device; the next limiting factor to study is scaling-induced routing/clocking effects under spatial parallelism.
+
+---
+
+## Stage 1.4 — Spatial Parallelism
 
 Replicate multiple MAC units:
 
@@ -106,9 +203,33 @@ Purpose:
 * Measure congestion‑induced frequency degradation
 * Study scaling behavior
 
-## Stage 1.4 — Control and Scheduling (Optional)
+### N_MAC = 2
 
-Introduce realistic control signals (valid/enable/fanout) to evaluate control‑path criticality.
+| Clock Period (ns) | Freq (MHz) | WNS (ns) | WPWS (ns) | DSP48 | Route % (crit) |  Status | Limiting Factor |
+| ----------------: | ---------: | -------: | --------: | ----: | -------------: | :-----: | --------------- |
+|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |          55.9% | ✅ Pass | Near clock PW   |
+|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |          71.4% | ❌ Fail | **WPWS**        |
+
+**Critical path:** FF → DSP48 (CEP) and DSP48 (P output) → FF, routing-dominated.
+
+**Notes:** Setup timing remains positive beyond 450 MHz; failures are driven by **clock pulse-width / primitive limits**, not arithmetic depth.
+
+**Summary:** When convolutional netowrk has 2 MAC in parallel, its route percentage setup time increases compared to the CNN with 1 MAC. 
+The maximum frequency doesn't change much.
+
+### N_MAC= 2 with BRAM
+
+```
+RAMB → output FF
+        ↓
+   broadcast registers
+        ↓
+N × (DSP48E1 (A*B+C, PREG=1))
+        ↓
+N × FF
+```
+
+
 
 ---
 
