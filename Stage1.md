@@ -203,6 +203,18 @@ Purpose:
 * Measure congestion‑induced frequency degradation
 * Study scaling behavior
 
+### N_MAC = 2
+
+| Clock Period (ns) | Freq (MHz) | WNS (ns) | WPWS (ns) | DSP48 | Route % (crit) | Status | Limiting Factor |
+| ----------------: | ---------: | -------: | --------: | ----: | -------------: | :----: | --------------- |
+|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |        ~56–70% | ✅ Pass | Near clock PW   |
+|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |        ~56–70% | ❌ Fail | **WPWS**        |
+
+**Critical path:** FF → DSP48 (CEP) and DSP48 (P output) → FF, routing-dominated.
+**Notes:** Setup timing remains positive beyond 450 MHz; failures are driven by **clock pulse-width / primitive limits**, not arithmetic depth.
+
+
+
 
 ---
 
