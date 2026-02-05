@@ -18,7 +18,7 @@
 
 Establish the **upper bound** on achievable frequency for a single MAC datapath by isolating arithmetic and register timing.
 
-[View RTL source](rtl/conv1x1_1cycle.sv)
+Conv1x1: [View RTL source](rtl/conv1x1_1cycle.sv)
 
 ### Architecture
 
@@ -87,9 +87,9 @@ Add on‑chip memory to the datapath:
 ```
 BRAM → FF → DSP48 → FF
 ```
-[View RTL source](rtl/BRAM.sv)
+BRAM: [View RTL source](rtl/BRAM.sv)
 
-[View RTL source](rtl/conv1x1_1BRAM.sv)
+Conv MAC with BRAM: [View RTL source](rtl/conv1x1_1BRAM.sv)
 
 ### FPGA Resource Utilization (Post-Synthesis)
 
@@ -170,13 +170,13 @@ BRAM  -> Reg
 
 This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range of the clock limitation for DSP48E1 set by Vivado.
 
-[View RTL source](rtl/add.sv)
+Add Stage: [View RTL source](rtl/add.sv)
 
-[View RTL source](rtl/mul.sv)
+Multiply Stage: [View RTL source](rtl/mul.sv)
 
-[View RTL source](rtl/output_reg.sv)
+Output Register Stage: [View RTL source](rtl/output_reg.sv)
 
-[View RTL source](rtl/conv1x1_pipeline_DSP.sv)
+Top: [View RTL source](rtl/conv1x1_pipeline_DSP.sv)
 
 ### Frequency Sweep Results
 
@@ -216,9 +216,9 @@ Purpose:
 * Measure congestion‑induced frequency degradation
 * Study scaling behavior
 
-[View RTL source](rtl/conv1x1_pipeline_MAC.sv)
+Single MAC: [View RTL source](rtl/conv1x1_pipeline_MAC.sv)
 
-[View RTL source](rtl/conv1x1_parallel_array.sv)
+NMAC top: [View RTL source](rtl/conv1x1_parallel_array.sv)
 
 ### N_MAC = 2
 
