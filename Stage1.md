@@ -179,7 +179,7 @@ This pipeline let the DSP48E1 use **MREG** and **PREG**, which improve the range
 
 * Datapath setup timing remains positive beyond 450 MHz
 * Failure is dominated by **clock primitive minimum period / pulse-width rules**, not combinational delay
-* logic: 0.518ns（38%）; route: 0.837ns（62%）
+* logic: 0.518ns（38%）; route: 0.837ns（62%）at 2.1ns clock period
 
 ### Conclusion
 
@@ -205,14 +205,17 @@ Purpose:
 
 ### N_MAC = 2
 
-| Clock Period (ns) | Freq (MHz) | WNS (ns) | WPWS (ns) | DSP48 | Route % (crit) | Status | Limiting Factor |
-| ----------------: | ---------: | -------: | --------: | ----: | -------------: | :----: | --------------- |
-|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |        55.9% | ✅ Pass | Near clock PW   |
-|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |            % | ❌ Fail | **WPWS**        |
+| Clock Period (ns) | Freq (MHz) | WNS (ns) | WPWS (ns) | DSP48 | Route % (crit) |  Status | Limiting Factor |
+| ----------------: | ---------: | -------: | --------: | ----: | -------------: | :-----: | --------------- |
+|             2.200 |      454.5 |   +0.534 |    +0.045 |     2 |          55.9% | ✅ Pass | Near clock PW   |
+|             2.100 |      476.2 |   +0.193 |    −0.055 |     2 |          71.4% | ❌ Fail | **WPWS**        |
 
 **Critical path:** FF → DSP48 (CEP) and DSP48 (P output) → FF, routing-dominated.
 
 **Notes:** Setup timing remains positive beyond 450 MHz; failures are driven by **clock pulse-width / primitive limits**, not arithmetic depth.
+
+**Summary:** When convolutional netowrk has 2 MAC in parallel, its route percentage setup time increases compared to the CNN with 1 MAC. 
+The maximum frequency doesn't change much.
 
 ### N_MAC= 2 with BRAM
 
